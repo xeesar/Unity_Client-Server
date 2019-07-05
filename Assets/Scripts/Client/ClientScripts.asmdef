@@ -1,3 +1,15 @@
-﻿{
-	"name": "ClientScripts"
+{
+    "name": "ClientScripts",
+    "references": [
+        "GUID:daade927392e5f64286a1882297dd666"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
 }
