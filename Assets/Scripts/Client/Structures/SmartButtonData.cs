@@ -1,4 +1,4 @@
-﻿using Client.Scripts.View;
+﻿using Client.Scripts.Enums;
 using Common.Scripts.Enums;
 
 namespace Client.Scripts.Structures
@@ -7,6 +7,6 @@ namespace Client.Scripts.Structures
     public struct SmartButtonData
     {
         public CommandType commandType;
-        public SmartHomeButton smartHomeButton;
+        public SmartButtonStatus status;
     }
 }

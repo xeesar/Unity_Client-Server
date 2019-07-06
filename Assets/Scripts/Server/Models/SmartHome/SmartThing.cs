@@ -1,10 +1,8 @@
 ﻿using Common.Scripts.Command;
-using UnityEngine;
 
 namespace Server.Scripts.Models
 {
-    public abstract class SmartThing : MonoBehaviour, IReceiver
+    public abstract class SmartThing : Receiver
     {
-        public abstract void HandleCommand();
     }
 }

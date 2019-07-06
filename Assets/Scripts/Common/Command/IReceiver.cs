@@ -1,7 +1,9 @@
-﻿namespace Common.Scripts.Command
+﻿using UnityEngine;
+
+namespace Common.Scripts.Command
 {
-    public interface IReceiver
+    public abstract class Receiver : MonoBehaviour
     {
-        void HandleCommand();
+        public abstract void HandleCommand();
     }
 }

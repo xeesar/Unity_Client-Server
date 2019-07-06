@@ -6,9 +6,9 @@ namespace Common.Scripts.Command
     {
         public CommandType CommandType => CommandType.SwitchAudio;
 
-        private IReceiver _receiver;
+        private Receiver _receiver;
 
-        public SwitchAudioCommand(IReceiver receiver)
+        public SwitchAudioCommand(Receiver receiver)
         {
             _receiver = receiver;
         }

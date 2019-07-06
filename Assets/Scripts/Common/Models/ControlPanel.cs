@@ -2,13 +2,13 @@
 using Common.Scripts.Command;
 using Common.Scripts.Enums;
 
-namespace Server.Scripts.Models
+namespace Common.Scripts.Models
 {
     public class ControlPanel
     {
         private Dictionary<CommandType, List<ICommand>> _commands;
 
-        public void AddCommand(ICommand command)
+        public void BindCommand(ICommand command)
         {
             if(_commands == null)
             {

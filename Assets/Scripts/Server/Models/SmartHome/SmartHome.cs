@@ -1,5 +1,8 @@
 ﻿using Server.Scripts.Managers;
 using Common.Scripts.Command;
+using Common.Scripts.Extensions;
+using Common.Scripts.Models;
+using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 
@@ -7,9 +10,8 @@ namespace Server.Scripts.Models
 {
     public class SmartHome : MonoBehaviour
     {
-        [Header("Smart Things")]
-        [SerializeField] private SmartLamp _smartLamp;
-        [SerializeField] private SmartAudio _smartAudio;
+        [Header("Commands")]
+        [SerializeField] private List<CommandData> _commands;
 
         private ControlPanel _controlPanel;
 
@@ -29,11 +31,12 @@ namespace Server.Scripts.Models
                 .Subscribe(commandType => _controlPanel.Invoke(commandType));
         }
 
-        //TODO - Большое полотно кода, когда много команд.
         private void SetupSmartThings()
         {
-            _controlPanel.AddCommand(new LightCommand(_smartLamp));
-            _controlPanel.AddCommand(new SwitchAudioCommand(_smartAudio));
+            for(int i = 0; i < _commands.Count; i++)
+            {
+                _controlPanel.BindCommand(CommandFactory.CreateCommand(_commands[i]));
+            }
         }
     }
 }

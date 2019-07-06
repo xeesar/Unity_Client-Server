@@ -1265,8 +1265,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f926c1f41e421e840b62a3c983189ed2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _smartLamp: {fileID: 767722104}
-  _smartAudio: {fileID: 743832812}
+  _commands:
+  - commandType: 0
+    receiver: {fileID: 767722104}
+  - commandType: 1
+    receiver: {fileID: 743832812}
 --- !u!1 &1439927481
 GameObject:
   m_ObjectHideFlags: 0

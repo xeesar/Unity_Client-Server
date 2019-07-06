@@ -1,22 +1,21 @@
-﻿using UnityEngine;
+﻿using Client.Scripts.Enums;
+using UnityEngine;
 using UnityEngine.UI;
-using UniRx;
 
 namespace Client.Scripts.View
 {
-    public class SmartHomeButton : MonoBehaviour
+    public class SmartHomeButtonView : MonoBehaviour
     {
         [Header("Components")]
         [SerializeField] private Image _smartElementStatusImage;
-        [SerializeField] private Button _smartButton;
 
         [Header("Options")]
         [SerializeField] private Color _smartElementActiveColor;
         [SerializeField] private Color _smartElementInactiveColor;
 
-        public void Start()
+        public void DisplayStatus(SmartButtonStatus status)
         {
-            _smartButton.OnClickAsObservable().Subscribe(x => );
+            _smartElementStatusImage.color = status == SmartButtonStatus.Active ? _smartElementActiveColor : _smartElementInactiveColor;
         }
     }
 }

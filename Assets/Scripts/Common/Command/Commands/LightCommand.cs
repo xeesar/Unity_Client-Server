@@ -6,9 +6,9 @@ namespace Common.Scripts.Command
     {
         public CommandType CommandType => CommandType.SwitchLight;
 
-        private IReceiver _receiver;
+        private Receiver _receiver;
 
-        public LightCommand(IReceiver receiver)
+        public LightCommand(Receiver receiver)
         {
             _receiver = receiver;
         }
