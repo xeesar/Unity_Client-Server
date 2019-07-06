@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Server.Scripts.Data
+namespace Common.Scripts.Data
 {
     [CreateAssetMenu(fileName = "ServerConfig", menuName = "Configs/Server Config")]
     public class ServerConfig : ScriptableObject

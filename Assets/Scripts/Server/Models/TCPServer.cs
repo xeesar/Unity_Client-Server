@@ -1,4 +1,4 @@
-﻿using Server.Scripts.Data;
+﻿using Common.Scripts.Data;
 using System.Net.Sockets;
 
 namespace Server.Scripts.Models

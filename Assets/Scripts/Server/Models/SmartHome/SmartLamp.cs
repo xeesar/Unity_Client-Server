@@ -7,9 +7,12 @@ namespace Server.Scripts.Models
         [Header("Component")]
         [SerializeField] private Light _light;
 
+        private bool _isEnabled = true;
+
         public override void HandleCommand()
         {
-            _light.enabled = !_light.enabled;
+            _isEnabled = !_isEnabled;
+            _light.enabled = _isEnabled;
         }
     }
 }

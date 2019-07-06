@@ -1,8 +1,8 @@
 ﻿using System;
-using Server.Scripts.Data;
+using Common.Scripts.Data;
 using Server.Scripts.Models;
 using Common.Scripts.Structures;
-using Common.Scripts.Command;
+using Common.Scripts.Enums;
 using UnityEngine;
 using UniRx;
 
@@ -35,7 +35,7 @@ namespace Server.Scripts.Managers
             Server?.StopServer();
         }
 
-        private void OnPacketReceived(Packet packet)
+        private void OnPacketReceived(CommandPacket packet)
         {
             _onExecuteCommand.OnNext(packet.CommandType);
         }

@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: ServerConfig
   m_EditorClassIdentifier: 
   serverIP: 127.0.0.1
-  serverPort: 1998
+  serverPort: 8080
   maxPendingConnections: 5

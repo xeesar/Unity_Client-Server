@@ -1,4 +1,6 @@
-﻿namespace Common.Scripts.Command
+﻿using Common.Scripts.Enums;
+
+namespace Common.Scripts.Command
 {
     public class SwitchAudioCommand : ICommand
     {

@@ -1,29 +1,39 @@
 ﻿using System.Collections.Generic;
 using Common.Scripts.Command;
+using Common.Scripts.Enums;
 
 namespace Server.Scripts.Models
 {
     public class ControlPanel
     {
-        private Dictionary<CommandType, ICommand> _commands;
+        private Dictionary<CommandType, List<ICommand>> _commands;
 
         public void AddCommand(ICommand command)
         {
             if(_commands == null)
             {
-                _commands = new Dictionary<CommandType, ICommand>();
+                _commands = new Dictionary<CommandType, List<ICommand>>();
             }
 
-            if (_commands.ContainsKey(command.CommandType)) return;
+            CommandType commandType = command.CommandType;
 
-            _commands.Add(command.CommandType, command);
+            if (!_commands.ContainsKey(commandType))
+            {
+                _commands.Add(commandType, new List<ICommand>());
+            }
+
+            _commands[commandType].Add(command);
         }
 
         public void Invoke(CommandType commandType)
         {
-            if(_commands.ContainsKey(commandType))
+            if (!_commands.ContainsKey(commandType)) return;
+
+            List<ICommand> _receivers = _commands[commandType];
+
+            for(int i = 0; i < _receivers.Count; i++)
             {
-                _commands[commandType].Execute();
+                _receivers[i].Execute();
             }
         }
     }

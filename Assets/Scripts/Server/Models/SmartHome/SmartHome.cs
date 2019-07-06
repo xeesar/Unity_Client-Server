@@ -25,9 +25,11 @@ namespace Server.Scripts.Models
             SetupSmartThings();
 
             ServerManager.Instance.OnExecuteCommandAsObservable()
+                .ObserveOnMainThread()
                 .Subscribe(commandType => _controlPanel.Invoke(commandType));
         }
 
+        //TODO - Большое полотно кода, когда много команд.
         private void SetupSmartThings()
         {
             _controlPanel.AddCommand(new LightCommand(_smartLamp));

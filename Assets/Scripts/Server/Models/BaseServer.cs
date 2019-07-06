@@ -1,9 +1,11 @@
-﻿using Server.Scripts.Data;
+﻿using Common.Scripts.Data;
 using Common.Scripts.Structures;
+using Common.Scripts.Enums;
 using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 using UniRx;
 
@@ -18,12 +20,12 @@ namespace Server.Scripts.Models
 
         protected bool _isServerActive;
 
-        protected Subject<Packet> _onPacketReceived = new Subject<Packet>();
+        protected Subject<CommandPacket> _onPacketReceived = new Subject<CommandPacket>();
 
 
-        public IObservable<Packet> OnPacketReceivedAsObservable()
+        public IObservable<CommandPacket> OnPacketReceivedAsObservable()
         {
-            return _onPacketReceived ?? (_onPacketReceived = new Subject<Packet>());
+            return _onPacketReceived ?? (_onPacketReceived = new Subject<CommandPacket>());
         }
 
         #region Server Logic
@@ -41,9 +43,7 @@ namespace Server.Scripts.Models
             _socket.Bind(_endPoint);
             _socket.Listen(Config.maxPendingConnections);
 
-            Observable.Start(() => ListenAny())
-                .AsUnitObservable()
-                .Subscribe();
+            StartListening();
 
             Debug.LogAssertion($"[{_endPoint.Address}] Started...");
         }
@@ -55,6 +55,11 @@ namespace Server.Scripts.Models
             _socket.Close();
 
             Debug.LogAssertion($"[{_endPoint.Address}] Closed...");
+        }
+
+        private async void StartListening()
+        {
+            await Task.Run(() => ListenAny());
         }
 
         private void ListenAny()
@@ -70,25 +75,23 @@ namespace Server.Scripts.Models
         {
             try
             {
-                Packet packet = GetPacket(listener);
-
+                CommandPacket packet = GetPacket(listener);
                 _onPacketReceived.OnNext(packet);
-                _onPacketReceived.OnCompleted();
 
-                listener.Send(Encoding.UTF8.GetBytes("Success."));
+                SendAnswer(listener, AnswerType.Success);
             }
             catch
             {
-                listener.Send(Encoding.UTF8.GetBytes("Packet is broken."));
+                SendAnswer(listener, AnswerType.Failed);
             }
             finally
-            {             
+            {
                 listener.Shutdown(SocketShutdown.Both);
                 listener.Close();
             }
         }
 
-        private Packet GetPacket(Socket listener)
+        private CommandPacket GetPacket(Socket listener)
         {
             var buffer = new byte[256];
             var size = 0;
@@ -101,7 +104,15 @@ namespace Server.Scripts.Models
 
             } while (listener.Available > 0);
 
-            return JsonUtility.FromJson<Packet>(data.ToString());
+            return JsonUtility.FromJson<CommandPacket>(data.ToString());
+        }
+
+        private void SendAnswer(Socket listener, AnswerType answerType)
+        {
+            AnswerPacket packet = new AnswerPacket { AnswerType = answerType };
+            string packetJSON = JsonUtility.ToJson(packet);
+
+            listener.Send(Encoding.UTF8.GetBytes(packetJSON));
         }
 
         #endregion

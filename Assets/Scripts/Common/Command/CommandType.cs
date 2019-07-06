@@ -1,4 +1,4 @@
-﻿namespace Common.Scripts.Command
+﻿namespace Common.Scripts.Enums
 {
     public enum CommandType
     {
