@@ -1,16 +1,15 @@
 ﻿using Server.Scripts.Data;
-using Common.Scripts.Observer;
 using Common.Scripts.Structures;
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using UnityEngine;
+using UniRx;
 
 namespace Server.Scripts.Models
 {
-    public abstract class BaseServer : IObservable
+    public abstract class BaseServer
     {
         public ServerConfig Config { get; private set; }
 
@@ -19,13 +18,17 @@ namespace Server.Scripts.Models
 
         protected bool _isServerActive;
 
-        private List<IObserver> _observers;
+        protected Subject<Packet> _onPacketReceived = new Subject<Packet>();
+
+
+        public IObservable<Packet> OnPacketReceivedAsObservable()
+        {
+            return _onPacketReceived ?? (_onPacketReceived = new Subject<Packet>());
+        }
 
         #region Server Logic
         public BaseServer(ServerConfig config)
         {
-            _observers = new List<IObserver>();
-
             Config = config;
 
             _endPoint = new IPEndPoint(IPAddress.Parse(config.serverIP), config.serverPort);
@@ -37,6 +40,10 @@ namespace Server.Scripts.Models
 
             _socket.Bind(_endPoint);
             _socket.Listen(Config.maxPendingConnections);
+
+            Observable.Start(() => ListenAny())
+                .AsUnitObservable()
+                .Subscribe();
 
             Debug.LogAssertion($"[{_endPoint.Address}] Started...");
         }
@@ -50,21 +57,32 @@ namespace Server.Scripts.Models
             Debug.LogAssertion($"[{_endPoint.Address}] Closed...");
         }
 
-        private async void StartListening()
-        {
-            await Task.Run(() => ListenAny());
-        }
-
         private void ListenAny()
         {
             while (_isServerActive)
             {
                 var listener = _socket.Accept();
+                OnConnectionCreated(listener);
+            }
+        }
 
+        private void OnConnectionCreated(Socket listener)
+        {
+            try
+            {
                 Packet packet = GetPacket(listener);
-                NotifyObservers(packet);
+
+                _onPacketReceived.OnNext(packet);
+                _onPacketReceived.OnCompleted();
 
                 listener.Send(Encoding.UTF8.GetBytes("Success."));
+            }
+            catch
+            {
+                listener.Send(Encoding.UTF8.GetBytes("Packet is broken."));
+            }
+            finally
+            {             
                 listener.Shutdown(SocketShutdown.Both);
                 listener.Close();
             }
@@ -86,25 +104,6 @@ namespace Server.Scripts.Models
             return JsonUtility.FromJson<Packet>(data.ToString());
         }
 
-        #endregion
-        #region Observer Realization
-        public void AddObserver(IObserver observer)
-        {
-            _observers.Add(observer);
-        }
-
-        public void RemoveObserver(IObserver observer)
-        {
-            _observers.Remove(observer);
-        }
-
-        public void NotifyObservers(object packet)
-        {
-            for(int i = 0; i < _observers.Count; i++)
-            {
-                _observers[i].Update(packet);
-            }
-        }
         #endregion
     }
 }

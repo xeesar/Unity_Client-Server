@@ -1,47 +1,43 @@
-﻿using Server.Scripts.Data;
+﻿using System;
+using Server.Scripts.Data;
 using Server.Scripts.Models;
 using Common.Scripts.Structures;
-using Common.Scripts.Enums;
-using Common.Scripts.Observer;
+using Common.Scripts.Command;
 using UnityEngine;
+using UniRx;
 
 namespace Server.Scripts.Managers
 {
-    public class ServerManager : MonoBehaviour, IObserver
+    public class ServerManager : Singleton<ServerManager>
     {
-        public ServerConfig config;
+        [Header("Options")]
+        [SerializeField] private ServerConfig _config;
 
         public BaseServer Server { get; private set; }
 
+        private Subject<CommandType> _onExecuteCommand = new Subject<CommandType>();
+
         public void Start()
         {
-            Server = new TCPServer(config);
+            Server = new TCPServer(_config);
 
+            Server.OnPacketReceivedAsObservable().Subscribe(packet => OnPacketReceived(packet));
             Server.StartServer();
-            Server.AddObserver(this);
+        }
+
+        public IObservable<CommandType> OnExecuteCommandAsObservable()
+        {
+            return _onExecuteCommand ?? (_onExecuteCommand = new Subject<CommandType>());
         }
 
         private void OnDisable()
         {
-            Server.StopServer();
+            Server?.StopServer();
         }
 
-        public void Update(object packet)
+        private void OnPacketReceived(Packet packet)
         {
-            OnPacketRecieved((Packet)packet);
-        }
-
-        private void OnPacketRecieved(Packet packet)
-        {
-            switch(packet.CommandType)
-            {
-                case CommandType.SwitchLight:
-                    break;
-                case CommandType.Explode:
-                    break;
-                default:
-                    break;
-            }
+            _onExecuteCommand.OnNext(packet.CommandType);
         }
     }
 }

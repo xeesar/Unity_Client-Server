@@ -1,8 +1,8 @@
-﻿namespace Common.Scripts.Enums
+﻿namespace Common.Scripts.Command
 {
     public enum CommandType
     {
         SwitchLight,
-        Explode
+        SwitchAudio
     }
 }

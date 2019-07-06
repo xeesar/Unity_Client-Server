@@ -1,7 +1,7 @@
 {
     "name": "ClientScripts",
     "references": [
-        "GUID:daade927392e5f64286a1882297dd666"
+        "CommonScripts"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

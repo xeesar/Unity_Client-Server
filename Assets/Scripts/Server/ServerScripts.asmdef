@@ -1,6 +1,7 @@
 {
     "name": "ServerScripts",
     "references": [
+        "GUID:560b04d1a97f54a4e82edc0cbbb69285",
         "GUID:daade927392e5f64286a1882297dd666"
     ],
     "optionalUnityReferences": [],

@@ -1,4 +1,4 @@
-﻿using Common.Scripts.Enums;
+﻿using Common.Scripts.Command;
 
 namespace Common.Scripts.Structures
 {
