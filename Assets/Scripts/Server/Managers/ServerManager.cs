@@ -11,23 +11,23 @@ namespace Server.Scripts.Managers
     public class ServerManager : Singleton<ServerManager>
     {
         [Header("Options")]
-        [SerializeField] private ServerConfig _config;
+        [SerializeField] private ServerConfig _serverConfig;
 
         public BaseServer Server { get; private set; }
 
-        private Subject<CommandType> _onExecuteCommand = new Subject<CommandType>();
+        private Subject<CommandType> _onCommandReceived = new Subject<CommandType>();
 
         public void Start()
         {
-            Server = new TCPServer(_config);
+            Server = new TCPServer(_serverConfig);
 
-            Server.OnPacketReceivedAsObservable().Subscribe(packet => OnPacketReceived(packet));
             Server.StartServer();
+            Server.OnPacketReceivedAsObservable().Subscribe(packet => OnPacketReceived(packet));
         }
 
-        public IObservable<CommandType> OnExecuteCommandAsObservable()
+        public IObservable<CommandType> OnCommandReceivedAsObservable()
         {
-            return _onExecuteCommand ?? (_onExecuteCommand = new Subject<CommandType>());
+            return _onCommandReceived ?? (_onCommandReceived = new Subject<CommandType>());
         }
 
         private void OnDisable()
@@ -37,7 +37,7 @@ namespace Server.Scripts.Managers
 
         private void OnPacketReceived(CommandPacket packet)
         {
-            _onExecuteCommand.OnNext(packet.CommandType);
+            _onCommandReceived.OnNext(packet.CommandType);
         }
     }
 }

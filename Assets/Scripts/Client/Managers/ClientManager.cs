@@ -24,7 +24,7 @@ namespace Client.Scripts.Managers
         {
             CommandPacket commandPacket = new CommandPacket { CommandType = commandType};
 
-            return _client.SendCommandToServer(commandPacket);
+            return _client.CommandRequest(commandPacket);
         }
     }
 }

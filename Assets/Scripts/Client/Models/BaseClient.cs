@@ -22,21 +22,18 @@ namespace Client.Scripts.Models
             _endPoint = new IPEndPoint(IPAddress.Parse(config.serverIP), config.serverPort);
         }
 
-        public IObservable<AnswerPacket> SendCommandToServer(CommandPacket packet)
+        public IObservable<AnswerPacket> CommandRequest(CommandPacket packet)
         {
             return Observable.Start(() => SendCommand(packet));
         }
 
-
         private AnswerPacket SendCommand(CommandPacket packet)
         {
-            string dataJSON = JsonUtility.ToJson(packet);
-            var data = Encoding.UTF8.GetBytes(dataJSON);
-
             Socket connection = CreateConnection();
-            connection.Send(data);
 
-            var answer = GetAnswer(connection);
+            SendData(connection, packet);
+
+            AnswerPacket answer = GetAnswer(connection);
 
             CloseConnection(connection);
 
@@ -45,12 +42,13 @@ namespace Client.Scripts.Models
 
         protected abstract Socket CreateConnection();
 
-        protected virtual void CloseConnection(Socket socket)
+        private void SendData(Socket connection, CommandPacket packet)
         {
-            socket.Shutdown(SocketShutdown.Both);
-            socket.Close();
-        }
+            string dataJSON = JsonUtility.ToJson(packet);
+            var data = Encoding.UTF8.GetBytes(dataJSON);
 
+            connection.Send(data);
+        }
 
         private AnswerPacket GetAnswer(Socket socket)
         {
@@ -68,6 +66,12 @@ namespace Client.Scripts.Models
             AnswerPacket answerPacket = JsonUtility.FromJson<AnswerPacket>(answer.ToString());
 
             return answerPacket;
+        }
+
+        private void CloseConnection(Socket socket)
+        {
+            socket.Shutdown(SocketShutdown.Both);
+            socket.Close();
         }
     }
 }

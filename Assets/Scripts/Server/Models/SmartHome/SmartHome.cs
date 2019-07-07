@@ -26,7 +26,7 @@ namespace Server.Scripts.Models
 
             SetupSmartThings();
 
-            ServerManager.Instance.OnExecuteCommandAsObservable()
+            ServerManager.Instance.OnCommandReceivedAsObservable()
                 .ObserveOnMainThread()
                 .Subscribe(commandType => _controlPanel.Invoke(commandType));
         }

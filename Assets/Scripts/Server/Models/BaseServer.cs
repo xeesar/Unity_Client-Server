@@ -41,7 +41,6 @@ namespace Server.Scripts.Models
             _isServerActive = true;
 
             _socket.Bind(_endPoint);
-            _socket.Listen(Config.maxPendingConnections);
 
             StartListening();
 
@@ -59,6 +58,8 @@ namespace Server.Scripts.Models
 
         private async void StartListening()
         {
+            _socket.Listen(Config.maxPendingConnections);
+
             await Task.Run(() => ListenAny());
         }
 
